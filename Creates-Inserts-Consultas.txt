@@ -1,0 +1,187 @@
+Projeto de E-commerce – BANCO DE DADOS
+Squad 6 – NSMN ( Raquel | Adrian | Antonio | Marcos | Pedro )
+
+3. SQL de criação das tabelas
+CREATE TABLE cliente(
+      codigo_cliente SERIAL PRIMARY KEY,
+      nome_completo VARCHAR(50) NOT NULL,
+      email_cliente VARCHAR(50) NOT NULL UNIQUE,
+      cpf_cliente  CHAR(11) NOT NULL UNIQUE,
+      data_nascimento DATE NOT NULL,
+      endereco VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE usuario(
+     cod_usuario SERIAL PRIMARY KEY,
+     login VARCHAR(50) NOT NULL UNIQUE,
+     senha CHAR(6) NOT NULL,
+     email_usuario VARCHAR(50) NOT NULL UNIQUE,
+     id_cliente INT REFERENCES cliente(codigo_cliente) ON UPDATE CASCADE ON DELETE CASCADE
+  );
+
+CREATE TABLE pedido(
+    codigo_pedido SERIAL PRIMARY KEY,
+    data_pedido DATE NOT NULL,
+    id_cliente INT REFERENCES cliente(codigo_cliente) ON UPDATE CASCADE ON DELETE CASCADE
+    );
+
+CREATE TABLE categoria(
+    codigo_categoria SERIAL PRIMARY KEY,
+    nome_categoria VARCHAR(100) NOT NULL UNIQUE,
+    descricao_categoria VARCHAR(100)
+  );
+  
+  CREATE TABLE funcionario(
+      codigo_funcionario SERIAL PRIMARY KEY,
+      nome_funcionario VARCHAR(50) NOT NULL,
+      cpf_funcionario CHAR(11) UNIQUE NOT NULL
+  );
+
+
+CREATE TABLE produto(
+    codigo_produto SERIAL PRIMARY KEY,
+    nome_produto VARCHAR(100) NOT NULL UNIQUE,
+    descricao_produto VARCHAR(100) NOT NULL,
+    quantidade_estoque INT NOT NULL,
+    data_fabricacao DATE NOT NULL,
+      data_de_cadastro DATE NOT NULL,
+    valor_unitario FLOAT NOT NULL,
+    id_funcionario INT REFERENCES funcionario(codigo_funcionario) ON UPDATE CASCADE ON DELETE CASCADE,
+    id_categoria INT REFERENCES categoria(codigo_categoria) ON UPDATE CASCADE ON DELETE CASCADE
+    );
+
+CREATE TABLE notaFiscal(
+    codigo_notafiscal SERIAL PRIMARY KEY,
+	   numero_notafiscal varchar(15) NOT NULL,
+    razao_social varchar(50) NOT NULL,
+    cnpj varchar(14) NOT NULL,
+    id_pedido INT REFERENCES pedido(codigo_pedido) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE pedidoItem(
+    codigo_item SERIAL PRIMARY KEY,
+      quantidade_item INT NOT NULL,
+      id_pedido INT REFERENCES pedido(codigo_pedido) ON UPDATE CASCADE ON DELETE CASCADE,
+      id_produto INT REFERENCES produto(codigo_produto) ON UPDATE CASCADE ON DELETE CASCADE
+);
+4. SQL de inserção de dados nas tabelas (pelo menos 5 registros em
+cada uma)
+
+INSERT INTO cliente (nome_completo, email_cliente, cpf_cliente, data_nascimento, endereco) values
+('Pedro Coelho', 'pedrohqcoelho@gmail.com', '12214161708', '1987-07-24', 'Rua Paraíba 90'),
+('Antonio Nunes', 'antonionunes@gmail.com', '12345678901', '1989-11-01', 'Rua Brasília 100'),
+('Adrian Menezes', 'adrian@gmail.com', '23456789012', '1958-07-22', 'Rua Rio de Janeiro 77'),
+('Marcos Moraes', 'marcos@gmail.com', '34567890123', '1955-08-13', 'Rua Paraná 30'),
+('Raquel Machado', 'raquel@gmail.com', '45678901234', '1985-03-20', 'Rua Ceará 8');
+
+INSERT INTO categoria (nome_categoria, descricao_categoria) values
+('Eletrônicos', 'Artigos eletrônicos de tecnologia'),
+('Games', 'Consoles, jogos e acessórios de videogames'),
+('Esporte', 'Produtos oficiais de times de futebol e outros esportes'),
+('Livros', 'Livros de literatura, quadrinhos, mangás'),
+('Casa', 'Artigos para o lar');
+
+INSERT INTO funcionario (nome_funcionario, cpf_funcionario) values
+('Anderson Carvalho', '10777777777'),
+('Germano Cano', '14141414141'),
+('Gabriel Chaves', '11111111111'),
+('Casimiro Miguel', '99999999999'),
+('Leonardo Lima', '77777777777');
+
+INSERT INTO usuario (login, senha, email_usuario, id_cliente) values
+('Pedro', '111111', 'pedrohqcoelho@gmail.com', '1'),
+('Antonio', '222222', 'antonionunes@gmail.com', '2'),
+('Adrian', '333333', 'adrian@gmail.com', '3'),
+('Marcos', '444444', 'marcos@gmail.com', '4'),
+('Raquel', '555555', 'raquel@gmail.com', '5');
+
+INSERT INTO produto (nome_produto, descricao_produto, quantidade_estoque, data_fabricacao, data_de_cadastro, valor_unitario, id_funcionario, id_categoria) values
+('Echo Dot', 'Smart Speaker', '100', '2020-01-01', '2020-02-01', '236.55', '1', '1'),
+('Nintendo Switch', 'Videogame', '400', '2019-08-14', '2019-08-29', '2499.99', '2', '2'),
+('Camisa Barcelona Home 20/21', 'Only for curles', '10', '2020-09-09', '2020-10-09', '149.99', '3', '3'),
+('Vinland Saga - 24', 'Mangá', '100', '2021-03-01', '2021-03-26', '236.55', '4', '4'),
+('Climatizador Philco', 'Climatizador de ambiente', '550', '2021-01-01', '2021-02-01', '659.99', '5', '5');
+
+
+INSERT INTO pedido (data_pedido, id_cliente) values
+('2021-09-15', '1'),
+('2021-09-07', '2'),
+('2021-09-14', '3'),
+('2021-09-15', '4'),
+('2021-09-15', '5'),
+('2021-09-15', '1');
+
+INSERT INTO pedidoitem (quantidade_item, id_pedido, id_produto) values
+('3', '1', '1'),
+('1', '2', '2'),
+('5', '3', '3'),
+('1', '4', '4'),
+('2', '5', '5'),
+('3', '1', '2');
+
+INSERT INTO notafiscal (numero_notafiscal,razao_social, cnpj, id_pedido) values
+('111111111111111','Amazon', '12345678901234', '1'),
+('222222222222222','Amazon', '12345678901234', '2'),
+('333333333333333','Netshoes', '23456789012345', '3'),
+('444444444444444','Panini', '34567890123456', '4'),
+('555555555555555','Amazon', '12345678901234', '5'),
+('111111111111111','Amazon', '12345678901234', '1');
+
+5. Um comando SQL de atualização em algum registro em uma tabela:
+UPDATE cliente
+SET nome_completo = 'Marcos Junior', email_cliente = 'junior@gmail.com', cpf_cliente = '98765432109',
+data_nascimento = '1995-10-19', endereco = 'Rua Alagoas 18'
+WHERE codigo_cliente = 4;
+6. Um comando SQL de exclusão de algum registro em uma tabela:
+DELETE FROM cliente WHERE codigo_cliente = 2 or cpf_cliente = '12345678901';
+7. 5 SQLs de consulta
+SELECT SUM(quantidade_item) as Total_de_itens,
+	   c.codigo_cliente,
+       c.nome_completo
+FROM pedidoitem as pi
+INNER JOIN pedido as p ON (p.codigo_pedido = pi.id_pedido)
+INNER JOIN cliente as c ON (c.codigo_cliente = p.id_cliente)
+WHERE id_pedido = 1
+GROUP BY c.codigo_cliente, c.nome_completo;
+a. Pelo menos 2 com algum tipo de junção
+SELECT p.codigo_produto,
+	   p.nome_produto,
+       p.data_de_cadastro,
+       f.codigo_funcionario,
+       f.nome_funcionario
+FROM funcionario AS f
+INNER JOIN produto AS p ON (p.id_funcionario = f.codigo_funcionario)
+
+SELECT u.login,
+       u.senha,
+       cl.nome_completo,
+       cl.endereco,
+       cl.cpf_cliente
+FROM cliente as cl
+INNER JOIN usuario as u ON (u.id_cliente = cl.codigo_cliente)
+WHERE u.email_usuario = cl.email_cliente
+b. Pelo menos 1 com usando count() e group by()
+SELECT COUNT(c.codigo_categoria), c.nome_categoria
+FROM categoria AS c
+GROUP BY c.nome_categoria;
+c. 1 SQL para construção de nota fiscal	
+SELECT nf.numero_notafiscal,
+       nf.razao_social,
+       nf.cnpj,
+       pd.codigo_pedido,
+       pd.data_pedido,
+       cli.codigo_cliente,
+       cli.nome_completo,
+       cli.cpf_cliente,
+       cli.endereco,
+       prod.nome_produto,
+       prod.valor_unitario,
+       pi.quantidade_item,
+       prod.valor_unitario * pi.quantidade_item AS valor_total
+FROM notafiscal AS nf
+INNER JOIN pedido AS pd ON (pd.codigo_pedido = nf.id_pedido)
+INNER JOIN pedidoitem AS pi ON (pi.id_pedido = pd.codigo_pedido)
+INNER JOIN produto AS prod ON (prod.codigo_produto = pi.id_produto)
+INNER JOIN cliente AS cli ON (cli.codigo_cliente = pd.id_cliente)
+ORDER BY nf.numero_notafiscal;
+
